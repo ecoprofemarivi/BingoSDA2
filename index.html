@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo de la Creatividad</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(255, 251, 235);
+            padding: 1rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            width: 100%;
+            max-width: 42rem;
+            overflow: hidden;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(217, 119, 6);
+            font-size: 2.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-cell {
+            background-color: rgb(245, 158, 11);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1;
+            padding: 0.25rem;
+            border: 2px solid rgb(252, 211, 77);
+            border-radius: 0.25rem;
+            background-color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bingo-cell.marked {
+            background-color: rgb(187, 247, 208);
+        }
+
+        .bingo-cell.center {
+            background-color: rgb(253, 230, 138);
+        }
+
+        .cell-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgb(31, 41, 55);
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        button.new-card {
+            background-color: rgb(245, 158, 11);
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.new-card:hover {
+            background-color: rgb(217, 119, 6);
+        }
+
+        @media (max-width: 640px) {
+            .cell-text {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-content">
+            <h1>BINGO DE LA CREATIVIDAD</h1>
+            <div class="bingo-grid" id="bingoGrid">
+                <!-- El contenido se generará con JavaScript -->
+            </div>
+            <div class="button-container">
+                <button class="new-card" onclick="reiniciarJuego()">Nuevo Cartón</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const afirmaciones = [
+            "He inventado un juego propio",
+            "He colaborado en una idea original",
+            "He encontrado una solución inesperada",
+            "Me gusta dibujar o hacer bocetos",
+            "He creado con materiales reciclados",
+            "Soy bueno/a improvisando",
+            "Me entusiasma descubrir cosas nuevas",
+            "Hago preguntas fuera de lo común",
+            "Disfruto imaginando futuros posibles",
+            "He cambiado una regla de un juego",
+            "He escrito una historia original",
+            "He compuesto una melodía",
+            "He diseñado un logo o cartel",
+            "He resuelto un acertijo difícil",
+            "He creado una receta nueva",
+            "He hecho un experimento científico",
+            "He inventado un personaje ficticio",
+            "He decorado mi espacio de forma única",
+            "He creado un baile o coreografía",
+            "He construido algo con LEGO sin instrucciones",
+            "He ideado una forma de reciclar",
+            "He inventado un idioma o código secreto",
+            "He personalizado mi ropa o accesorios",
+            "He creado un meme original"
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generarCarton() {
+            const shuffled = shuffleArray([...afirmaciones]);
+            return [
+                ...shuffled.slice(0, 12),
+                "He transformado un error en una oportunidad",
+                ...shuffled.slice(12, 24)
+            ];
+        }
+
+        function crearBingo() {
+            const grid = document.getElementById('bingoGrid');
+            grid.innerHTML = '';
+
+            // Añadir encabezado BINGO
+            'BINGO'.split('').forEach(letra => {
+                const headerCell = document.createElement('div');
+                headerCell.className = 'header-cell';
+                headerCell.textContent = letra;
+                grid.appendChild(headerCell);
+            });
+
+            // Generar casillas del bingo
+            const casillas = generarCarton();
+            casillas.forEach((texto, index) => {
+                const cell = document.createElement('div');
+                cell.className = `bingo-cell ${index === 12 ? 'center' : ''}`;
+                cell.onclick = function() {
+                    this.classList.toggle('marked');
+                };
+
+                const span = document.createElement('span');
+                span.className = 'cell-text';
+                span.textContent = texto;
+
+                cell.appendChild(span);
+                grid.appendChild(cell);
+            });
+        }
+
+        function reiniciarJuego() {
+            crearBingo();
+        }
+
+        // Iniciar el juego cuando carga la página
+        window.onload = crearBingo;
+    </script>
+</body>
+</html>
